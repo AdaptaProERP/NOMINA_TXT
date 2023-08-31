@@ -343,14 +343,12 @@ FUNCTION EJECUTAR(oFrmTxt,lListar)
 
       cPrg:=SQLGET("DPBANCOS","BAN_DEFNOM","BAN_BCOTXT"+GetWhere("=",oFrmTxt:cBanco))
 
-? cPrg,"cPrg"
-
       // AQUI SE AGREGAR LOS NUEVOS BANCOS CON SU NOMBRE Y RESPECTIVO PROGRAMA
       DO CASE
 
          CASE !Empty(cPrg)
             // 30/08/2023
-            oFrmTxt:RUNTXTPRG(cPrg)
+            oFrmTxt:RUNTXTPRG(cPrg,oTable,ALLTRIM(oFrmTxt:cFileBco),oFrmTxt:oMeter,oFrmTxt:oSayTrab,oFrmTxt:lEditar)
  
          CASE "BANESCO"$UPPE(oFrmTxt:cBanco)
             EJECUTAR("BCOBANESCO",oTable,ALLTRIM(oFrmTxt:cFileBco),oFrmTxt:oMeter,oFrmTxt:oSayTrab,oFrmTxt:lEditar)
@@ -641,16 +639,19 @@ FUNCTION BRRECIBOS()
           "FCH_HASTA"+GetWhere("=",dHasta)+" AND "+;
           "DPBANCODIR.BAN_NOMBRE"+GetWhere("=",oFrmTxt:cBanco)
 
-EJECUTAR("BRRECIBOS",cWhere,cCodSuc,nPeriodo,dDesde,dHasta,cTitle)
+  cTitle:=" Banco "+oFrmTxt:cBanco
+
+RETURN EJECUTAR("BRRECIBOS",cWhere,cCodSuc,nPeriodo,dDesde,dHasta,cTitle)
 
 
 /*
 // Ejecutar Programa Definible
 // cBanco Directorio Bancario, busca el Codigo de Banco
+// 31/08/2023
 */
 
 FUNCTION RUNTXTPRG(cPrg,p1, p2, p3, p4, p5, p6, p7, p8, p9, p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20)
-   LOCAL oScript := NIL,xRet
+   LOCAL oScript := NIL,lRet
 
    oScript:=TScript():New(cPrg) // oMemo:GetText())
    oScript:Reset()
@@ -672,7 +673,7 @@ FUNCTION RUNTXTPRG(cPrg,p1, p2, p3, p4, p5, p6, p7, p8, p9, p10,p11,p12,p13,p14,
 
    ENDIF
 
-? "lRet",lRet
+// ? "lRet",lRet
 
 RETURN lRet
 
